@@ -35,7 +35,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -115,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
@@ -126,6 +125,10 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.JSONParser',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
     # 'EXCEPTION_HANDLER': 'wecert.core.exceptions.core_exception_handler',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'VERSION_PARAM': "version",
@@ -136,26 +139,23 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
-# 认证后端列表
-AUTHENTICATION_BACKENDS = (
-    'rest_framework.authentication.TokenAuthentication',
-    'django.contrib.auth.backends.ModelBackend',
-    # 'guardian.backends.ObjectPermissionBackend',
-)
-
-
 # swagger
 SWAGGER_SETTINGS = {
-    # 'VALIDATOR_URL': 'http://localhost:9002',
+    "LOGOUT_URL": 'rest_framework:logout',
     "LOGIN_URL": 'rest_framework:login',
-    "LOGOUT_URL": 'rest_framework:logout'
-    # 'SECURITY_DEFINITIONS': {
-    #     'api_Key': {
-    #         'type': 'apiKey',
-    #         'in': 'header',
-    #         'name': 'Authorization Token'
-    #     }
-    # },
+    'DEFAULT_INFO': 'Door.urls.swagger_info',
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+    'SHOW_REQUEST_HEADERS': True,
+    'JSON_EDITOR': True,
+    'APIS_SORTER': 'alpha',
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
+    'OPERATIONS_SORTER': 'alpha'
 }
 
 # jwt setting

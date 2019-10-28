@@ -11,7 +11,7 @@ class Account(AbstractUser, base_models.BaseTimestampModel):
     """
     用户信息表
     """
-    phone = models.CharField(max_length=11, null=True, blank=True, unique=True, verbose_name="手机号")
+    phone = models.CharField(max_length=11, null=True, blank=True, unique=True, verbose_name="phone")
     create_time = models.DateTimeField(auto_now_add=True, null=True)
     update_time = models.DateTimeField(auto_now=True, null=True)
 

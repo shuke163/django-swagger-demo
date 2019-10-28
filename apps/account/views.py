@@ -5,8 +5,10 @@ from rest_framework import status
 from apps.account.models import Account
 from apps.account.serializers import LoginSerializer, TokenSerializer, AccountSerializer
 from rest_framework import viewsets
+from rest_framework.renderers import JSONRenderer
 from libs.renders import CustomJSONRenderer
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
 
 import logging
 
@@ -18,6 +20,7 @@ class AccountViewSet(viewsets.ViewSet):
     user view set
     """
 
+    @swagger_auto_schema(responses={200: AccountSerializer(many=True)})
     def list(self, request, *args, **kwargs):
         queryset = Account.objects.filter(is_staff=True).order_by('-id')
         ser = AccountSerializer(queryset, many=True)
@@ -34,18 +37,18 @@ class LoginView(APIView):
     """
     login
     """
-    # serializer_class = LoginSerializer
     permission_classes = []
 
-    renderer_classes = (CustomJSONRenderer,)
+    renderer_classes = (CustomJSONRenderer, JSONRenderer)
 
+    @swagger_auto_schema(responses={200: LoginSerializer(many=True)})
     def post(self, request, *args, **kwargs):
-        serializer = LoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             user = serializer.user
 
             token, _ = Token.objects.get_or_create(user=user)
-            data = TokenSerializer(token).data
+            data = TokenSerializer(instance=token).data
 
             logger.debug(f"{user.username} login success and token: {token}")
             return Response(data=data, status=status.HTTP_200_OK)
@@ -53,9 +56,31 @@ class LoginView(APIView):
             return Response(data={"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SetPasswordView(APIView):
+class LogoutView(APIView):
     """
-    重置密码
+    logout
+    """
+    permission_classes = []
+
+    # renderer_classes = (CustomJSONRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            token = request.user.auth_token.key
+            request.user.auth_token.delete()
+
+            logger.debug(f"{request.user} logout and token: {token}")
+            return Response(data={"code": status.HTTP_200_OK, "message": "ok"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.debug(f"{request.user} logout failed: {str(e)}")
+            return Response(
+                data={"code": status.HTTP_500_INTERNAL_SERVER_ERROR, "errors": f"{e.__class__.__name__}: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ResetPasswordView(APIView):
+    """
+    reset password
     """
 
     def post(self, request, *args, **kwargs):

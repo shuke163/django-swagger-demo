@@ -17,6 +17,8 @@ router.register(r'users', AccountViewSet, basename='user')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url('^login/$', LoginView.as_view()),
-    url('^setpassword/$', SetPasswordView.as_view()),
+    url(r'^login/$', LoginView.as_view()),
+    url(r'^logout/$', LogoutView.as_view()),
+    url(r'^reset/$', ResetPasswordView.as_view()),
+
 ]
