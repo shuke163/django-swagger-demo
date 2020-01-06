@@ -31,17 +31,17 @@ class CustomJSONRenderer(JSONRenderer):
                 "code": response.status_code,
                 "data": data['results'],
                 # "count": data['count'],
-                "message": "ok"
+                "msg": "ok"
             })
 
         elif data.get('errors', None) is not None:
             return json.dumps({
                 "code": response.status_code,
-                "message": data.get('errors')
+                "msg": data.get('errors')
             })
         else:
             return json.dumps({
                 "code": response.status_code,
                 "data": data,
-                "message": "ok"
+                "msg": "ok"
             })

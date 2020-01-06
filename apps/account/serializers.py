@@ -48,6 +48,13 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ("token", "created")
 
 
+class SomeSerializer(serializers.Serializer):
+    some_number = serializers.SerializerMethodField()
+
+    def get_some_number(self, obj) -> float:
+        return 1.0
+
+
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
