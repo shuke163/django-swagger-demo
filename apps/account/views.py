@@ -6,7 +6,7 @@ from apps.account.models import Account
 from apps.account.serializers import LoginSerializer, TokenSerializer, AccountSerializer
 from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
-from libs.renders import CustomJSONRenderer
+from apps.core.renders import CustomJSONRenderer
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger("door")
 
 
-class AccountViewSet(viewsets.ViewSet):
+class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     user view set
     """

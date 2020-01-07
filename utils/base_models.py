@@ -4,7 +4,7 @@
 @author: shuke
 @file: base_models.py 
 @time: 2019/10/25 13:26
-@contact: shu_ke163@163.com
+@contact: zhaofengfeng@rongcloud.cn
 @software:  Door
 """
 

@@ -13,9 +13,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import sys
 import datetime
+from config import config
+
+from apps.core.loggers import JsonFormatter
 
 import pymysql
 
+pymysql.version_info = (1, 3, 13, "final", 0)
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -30,7 +34,9 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'qz$l8ai0z101@rfjofwc6i9hijrr76+-6p-no)6-3=)e2tt#f)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+env = os.getenv("env", "dev")
+
+DEBUG = config[env]().DEBUG if config[env]().DEBUG else False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -47,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'apps.account',
+    'apps.sprint',
 ]
 
 MIDDLEWARE = [
@@ -67,8 +74,7 @@ AUTH_USER_MODEL = 'account.Account'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,6 +96,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'account': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config[env]().mysql["db"],
+        'USER': config[env]().mysql["user"],
+        'PASWORD': config[env]().mysql["password"],
+        'HOST': config[env]().mysql["host"],
+        'PORT': config[env]().mysql["port"],
+        # 'OPTIONS': {
+        #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        # },
     }
 }
 
@@ -114,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
@@ -129,12 +146,12 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
-    # 'EXCEPTION_HANDLER': 'wecert.core.exceptions.core_exception_handler',
+    'EXCEPTION_HANDLER': 'apps.core.exceptions.core_exception_handler',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'VERSION_PARAM': "version",
     'DEFAULT_VERSION': 'v1',
     'ALLOWED_VERSIONS': ['v1', 'v2'],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
     'PAGE_SIZE': 10,
 }
@@ -240,58 +257,94 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # LOG
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+# project info
+PROJECT_DICT = config[env]().PROJECT,
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
+        'json': {
+            '()': JsonFormatter,
+        },
         'standard': {
-            'format': '[%(asctime)s] [%(threadName)s:%(thread)d] [task_id:%(name)s] [%(filename)s:%(lineno)d] [%(levelname)s]: %(message)s'
+            'format': '[%(asctime)s] [%(threadName)s:%(thread)d] [task_id:%(name)s] [%(filename)s: %(lineno)d] [%(levelname)s]: %(message)s',
         },
         'simple': {
-            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d] %(message)s'
+            'format': '[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
+        },
+        'verbose': {
+            'format': '%(asctime)s - %(levelname)s - [%(pathname)s] - [%(filename)s: %(lineno)d] - %(message)s'
         },
     },
-    # 过滤器
+    # filter
     'filters': {
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
     'handlers': {
+        'kafka': {
+            'level': 'INFO',
+            'class': 'apps.core.loggers.KafkaLoggingHandler',
+            'brokers': config[env]().kafka['brokers'][0],
+            'topic': config[env]().kafka['topic'],
+            'formatter': 'json',
+            'encoding': 'utf-8',
+            'when': 'midnight',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
         'console': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],  # 只有在Django debug为True时才在屏幕打印日志
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'verbose',
+            'stream': sys.stdout,
         },
         'info': {
             'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_LOG_DIR, "door.info.log"),
-            'maxBytes': 1024 * 1024 * 50,
-            'backupCount': 3,
+            # 'maxBytes': 1024 * 1024 * 50,
+            'backupCount': 10,
             'formatter': 'standard',
             'encoding': 'utf-8',
+            'when': 'midnight',
         },
         'error': {
             'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_LOG_DIR, "door.error.log"),
-            'maxBytes': 1024 * 1024 * 50,
-            'backupCount': 5,
+            # 'maxBytes': 1024 * 1024 * 50,
+            'backupCount': 10,
             'formatter': 'standard',
             'encoding': 'utf-8',
         },
     },
     'loggers': {
         'door': {
-            'handlers': ['info', 'console', 'error'],  # 上线之后可以把'console'移除
-            'level': 'DEBUG',
+            'handlers': ['info', 'error', 'console', 'kafka'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['info', "kafka"],
+            'level': 'INFO',
             'propagate': True,  # 向更高级别的logger传递
         },
-    },
+        'django.server': {
+            'handlers': ['django.server', 'console', 'kafka'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    }
 }

@@ -8,9 +8,15 @@
 
 from django.contrib.auth import get_user_model
 
-from rest_framework import authentication, permissions, viewsets, filters
-
+from rest_framework import authentication, permissions, filters
 from rest_framework import viewsets
+
+from django.shortcuts import get_object_or_404
+
+from rest_framework.renderers import JSONRenderer
+from apps.core.renders import CustomJSONRenderer
+
+from rest_framework.response import Response
 
 from .models import Sprint, Task
 from .serializers import SprintSerializers, TaskSerializer, UserSerializers
@@ -33,17 +39,30 @@ class DefaultsMixin(object):
     max_paginate_by = 100
 
     filter_backends = (
-        filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     )
 
 
 class SprintViewSet(DefaultsMixin, viewsets.ModelViewSet):
-    queryset = Sprint.objects.order_by("end")
+    """
+        A simple ViewSet for listing or retrieving users.
+    """
     serializer_class = SprintSerializers
+    renderer_classes = (CustomJSONRenderer, JSONRenderer)
     search_fields = ("name",)
     ordering_fields = ("end", "name",)
+
+    def list(self, request, *args, **kwargs):
+        queryset = Sprint.objects.all().order_by("end")
+        ser = SprintSerializers(queryset, many=True)
+        return Response({"data": ser.data})
+
+    def retrieve(self, request, version, pk=None):
+        queryset = Sprint.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        ser = SprintSerializers(user)
+        return Response(ser.data)
 
 
 class TaskViewSet(DefaultsMixin, viewsets.ModelViewSet):

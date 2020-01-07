@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     url(r'api/(?P<version>[v1]+)/account/', include("account.urls")),
+    url(r'api/(?P<version>[v1]+)/sprint/', include("sprint.urls")),
 ]

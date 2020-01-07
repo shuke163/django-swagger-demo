@@ -35,7 +35,7 @@ class SprintSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Sprint
-        fields = ("id", "name", "description", "end")
+        fields = ("id", "name", "description", "end", "links")
 
     def get_links(self, obj):
         request = self.context["request"]
@@ -46,8 +46,8 @@ class SprintSerializers(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     assigned = serializers.SlugRelatedField(
-        slug_field=User.USERNAME_FIELD, required=False, allow_null=true,
-        queryset=user.objects.all
+        slug_field=User.USERNAME_FIELD, required=False, allow_null=True,
+        queryset=User.objects.all
     )
     status_display = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
@@ -56,7 +56,7 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = (
             "id", "name", "description", "sprint", "status", "status_display", "order", "assigned", "started", "due",
-            "completed")
+            "completed", "links")
 
     def get_status_display(self, obj):
         return obj.get_status_display()

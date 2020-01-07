@@ -4,7 +4,7 @@
 @author: shuke
 @file: baseviews.py 
 @time: 2019/10/26 17:47
-@contact: shu_ke163@163.com
+@contact: zhaofengfeng@rongcloud.cn
 @software:  Door
 """
 
