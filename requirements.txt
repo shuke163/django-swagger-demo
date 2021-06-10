@@ -1,4 +1,4 @@
 drf_yasg==1.17.0
 PyMySQL==0.9.3
-Django==2.2.13
+Django==2.2.24
 djangorestframework==3.10.3
