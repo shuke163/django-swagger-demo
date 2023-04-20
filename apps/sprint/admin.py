@@ -3,7 +3,7 @@
 """
 @file: admin.py 
 @time: 2020/01/06 10:05
-@software:  Door
+@software:  swagger-demo
 """
 
 from django.contrib import admin

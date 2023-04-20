@@ -4,8 +4,8 @@
 @author: shuke
 @file: baseviews.py 
 @time: 2019/10/26 17:47
-@contact: zhaofengfeng@rongcloud.cn
-@software:  Door
+@contact: shu_ke163@163.com
+@software:  swagger-demo
 """
 
 from rest_framework import viewsets
@@ -15,7 +15,6 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class ReturnFormatMixin(object):
-
     @classmethod
     def get_ret(cls):
         return {'status': 0, 'msg': '', 'data': {}}

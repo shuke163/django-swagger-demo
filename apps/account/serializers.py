@@ -5,7 +5,7 @@
 @file: serializers.py 
 @time: 2019/10/25 18:29
 @contact: shu_ke163@163.com
-@software:  Door
+@software:  swagger-demo
 """
 from django.contrib.auth import authenticate
 from rest_framework import serializers
@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 
 import logging
 
-logger = logging.getLogger("door")
+logger = logging.getLogger("swagger-demo")
 
 
 class LoginSerializer(serializers.Serializer):
@@ -31,13 +31,16 @@ class LoginSerializer(serializers.Serializer):
         self.user = None
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
+        self.user = authenticate(username=attrs.get("username"),
+                                 password=attrs.get('password'))
         if self.user:
             if not self.user.is_active:
-                raise serializers.ValidationError(self.error_messages['inactive_account'])
+                raise serializers.ValidationError(
+                    self.error_messages['inactive_account'])
             return attrs
         else:
-            raise serializers.ValidationError(self.error_messages['invalid_credentials'])
+            raise serializers.ValidationError(
+                self.error_messages['invalid_credentials'])
 
 
 class TokenSerializer(serializers.ModelSerializer):

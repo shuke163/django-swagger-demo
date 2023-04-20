@@ -3,7 +3,7 @@
 """
 @file: apps.py 
 @time: 2020/01/06 10:03
-@software:  Door
+@software:  swagger-demo
 """
 
 from django.apps import AppConfig

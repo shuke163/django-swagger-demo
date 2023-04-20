@@ -5,7 +5,7 @@
 @file: urls.py 
 @time: 2019/10/25 19:11
 @contact: shu_ke163@163.com
-@software:  Door
+@software:  swagger-demo
 """
 
 from django.conf.urls import url, include

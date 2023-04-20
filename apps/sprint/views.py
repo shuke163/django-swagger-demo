@@ -3,7 +3,7 @@
 """
 @file: views.py 
 @time: 2020/01/05 15:55
-@software:  Door
+@software:  swagger-demo
 """
 
 from django.contrib.auth import get_user_model
@@ -31,9 +31,7 @@ class DefaultsMixin(object):
         authentication.BasicAuthentication,
         authentication.TokenAuthentication,
     )
-    permissions_classes = (
-        permissions.IsAuthenticated,
-    )
+    permissions_classes = (permissions.IsAuthenticated, )
     paginate_by = 25
     paginate_by_param = "page_size"
     max_paginate_by = 100
@@ -50,8 +48,11 @@ class SprintViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     serializer_class = SprintSerializers
     renderer_classes = (CustomJSONRenderer, JSONRenderer)
-    search_fields = ("name",)
-    ordering_fields = ("end", "name",)
+    search_fields = ("name", )
+    ordering_fields = (
+        "end",
+        "name",
+    )
 
     def list(self, request, *args, **kwargs):
         queryset = Sprint.objects.all().order_by("end")
@@ -69,8 +70,17 @@ class TaskViewSet(DefaultsMixin, viewsets.ModelViewSet):
     queryset = Task.objects.all()
     filter_class = TaskFilter
     serializer_class = TaskSerializer
-    search_fields = ("name", "description",)
-    ordering_fields = ("name", "order", "started", "due", "completed",)
+    search_fields = (
+        "name",
+        "description",
+    )
+    ordering_fields = (
+        "name",
+        "order",
+        "started",
+        "due",
+        "completed",
+    )
 
 
 class UserViewSet(DefaultsMixin, viewsets.ReadOnlyModelViewSet):
@@ -78,4 +88,4 @@ class UserViewSet(DefaultsMixin, viewsets.ReadOnlyModelViewSet):
     lookup_url_kwarg = User.USERNAME_FIELD
     queryset = User.objects.order_by(User.USERNAME_FIELD)
     serializer_class = UserSerializers
-    search_fields = (User.USERNAME_FIELD,)
+    search_fields = (User.USERNAME_FIELD, )

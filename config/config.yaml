@@ -1,15 +1,15 @@
 base:
   debug: True
-  app: "Door"
+  app: "swagger-demo"
   project:
-    name: 'Door-backend'
+    name: 'swagger-demo-backend'
     department: 'channel-devops'
     team: 'devops'
 
 prod:
   mysql:
-    db: "doordb"
-    user: "app_door_rw"
+    db: "swagger-demodb"
+    user: "app_swagger-demo_rw"
     password: "beRcnLADAJdsycZKrdKseR8d"
     host: "127.0.0.1"
     port: 3306
@@ -25,8 +25,8 @@ prod:
 
 stage:
   mysql:
-    db: "doordb"
-    user: "app_door_rw"
+    db: "swagger-demodb"
+    user: "app_swagger-demo_rw"
     password: "beRcnLADAJdsycZKrdKseR8d"
     host: "127.0.0.1"
     port: 3306
@@ -42,8 +42,8 @@ stage:
 
 dev:
   mysql:
-    db: "doordb"
-    user: "app_door_rw"
+    db: "swagger-demodb"
+    user: "app_swagger-demo_rw"
     password: "beRcnLADAJdsycZKrdKseR8d"
     host: "127.0.0.1"
     port: 3306

@@ -1,11 +1,11 @@
 #
-# Door-backend Makefile
+# swagger-demo-backend Makefile
 #
 
 SHELL := /bin/bash
 
 NOW := $(shell date +"%Y-%m-%d %H:%M:%S")
-PROJECT := Door-backend
+PROJECT := swagger-demo-backend
 PKG_NAME := $(PROJECT).tar.gz
 
 

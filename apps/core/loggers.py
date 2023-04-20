@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 @file: loggers.py 
-@content: zhaofengfeng@rongcloud.cn
+@content: shu_ke163@163.com
 @time: 2020/01/06 15:42
-@software:  Door
+@software:  swagger-demo
 """
 
 import sys
@@ -32,11 +32,11 @@ class JsonFormatterBase(logging.Formatter):
             self.host = socket.gethostname()
 
     def get_extra_fields(self, record):
-        skip_list = (
-            "args", "asctime", "created", "exc_info", "exc_text", "filename", "id", "levelname", "levelno", "modele",
-            "msecs", "message", "msg", "name", "pathname", "relativeCreated", "extra", "request", "server_time",
-            "stack_info"
-        )
+        skip_list = ("args", "asctime", "created", "exc_info", "exc_text",
+                     "filename", "id", "levelname", "levelno", "modele",
+                     "msecs", "message", "msg", "name", "pathname",
+                     "relativeCreated", "extra", "request", "server_time",
+                     "stack_info")
 
         if sys.version_info < (3, 0):
             easy_types = (bool, dict, float, int, list, type(None))
@@ -84,11 +84,13 @@ class JsonFormatterBase(logging.Formatter):
     @classmethod
     def format_timestamp(cls, time):
         tstamp = datetime.utcfromtimestamp(time)
-        return tstamp.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (tstamp.microsecond / 1000) + "Z"
+        return tstamp.strftime(
+            "%Y-%m-%dT%H:%M:%S") + ".%03d" % (tstamp.microsecond / 1000) + "Z"
 
     @classmethod
     def format_exception(cls, exc_info):
-        return "".join(traceback.format_exception(*exc_info)) if exc_info else ""
+        return "".join(traceback.format_exception(
+            *exc_info)) if exc_info else ""
 
     @classmethod
     def serialize(cls, message):
@@ -120,14 +122,14 @@ class JsonFormatter(JsonFormatterBase):
 
 
 class KafkaLoggingHandler(logging.Handler, JsonFormatter):
-
     def __init__(self, brokers, topic, **kwargs):
         logging.Handler.__init__(self)
         self.topic = topic
         self.brokers = brokers
         try:
-            self.producer = KafkaProducer(bootstrap_servers=brokers,
-                                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            self.producer = KafkaProducer(
+                bootstrap_servers=brokers,
+                value_serializer=lambda v: json.dumps(v).encode('utf-8'))
         except:
             self.producer = None
         super(KafkaLoggingHandler).__init__()
@@ -136,9 +138,10 @@ class KafkaLoggingHandler(logging.Handler, JsonFormatter):
         try:
             msg = self.format(record)
             if self.producer:
-                self.producer = KafkaProducer(bootstrap_servers=self.brokers,
-                                              # value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                                              compression_type='gzip')
+                self.producer = KafkaProducer(
+                    bootstrap_servers=self.brokers,
+                    # value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+                    compression_type='gzip')
                 self.producer.send(self.topic, bytes(msg, encoding="utf-8"))
         except errors.NoBrokersAvailable:
             self.producer = None

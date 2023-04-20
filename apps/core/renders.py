@@ -5,7 +5,7 @@
 @file: response.py 
 @time: 2019/10/25 18:16
 @contact: shu_ke163@163.com
-@software:  Door
+@software:  swagger-demo
 """
 
 import json
@@ -14,7 +14,7 @@ from rest_framework.renderers import JSONRenderer
 
 import logging
 
-logger = logging.getLogger("door")
+logger = logging.getLogger("swagger-demo")
 
 
 class CustomJSONRenderer(JSONRenderer):

@@ -3,9 +3,9 @@
 """
 @aythor: shuke
 @file: __init__.py.py 
-@content: zhaofengfeng@rongcloud.cn
+@content: shu_ke163@163.com
 @time: 2020/01/06 17:46
-@software:  Door
+@software:  swagger-demo
 """
 
 import os
@@ -13,7 +13,7 @@ import ruamel.yaml
 
 import logging
 
-logger = logging.getLogger("door")
+logger = logging.getLogger("swagger-demo")
 
 try:
     from django.conf import settings
@@ -105,5 +105,5 @@ config = {
 }
 
 if __name__ == '__main__':
-    print(config["dev"]().env, config["dev"]().DEBUG, config["dev"]().PROJECT, config["dev"]().mysql,
-          config["dev"]().redis, config["dev"]().kafka)
+    print(config["dev"]().env, config["dev"]().DEBUG, config["dev"]().PROJECT,
+          config["dev"]().mysql, config["dev"]().redis, config["dev"]().kafka)

@@ -3,7 +3,7 @@
 """
 @file: urls.py 
 @time: 2020/01/06 10:01
-@software:  Door
+@software:  swagger-demo
 """
 from django.conf.urls import url, include
 from apps.sprint.views import *

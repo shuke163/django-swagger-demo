@@ -3,7 +3,7 @@
 """
 @file: models.py 
 @time: 2020/01/05 15:43
-@software:  Door
+@software:  swagger-demo
 """
 
 from django.db import models
@@ -35,10 +35,18 @@ class Task(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, default="")
-    sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, related_name='sprint', blank=True, null=True)
-    status = models.SmallIntegerField(choices=STATUS_CHOICE, default=STATUS_TODO)
+    sprint = models.ForeignKey(Sprint,
+                               on_delete=models.CASCADE,
+                               related_name='sprint',
+                               blank=True,
+                               null=True)
+    status = models.SmallIntegerField(choices=STATUS_CHOICE,
+                                      default=STATUS_TODO)
     order = models.SmallIntegerField(default=0)
-    assigned = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    assigned = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                 on_delete=models.CASCADE,
+                                 null=True,
+                                 blank=True)
     started = models.DateField(blank=True, null=True)
     due = models.DateField(blank=True, null=True)
     completed = models.DateField(blank=True, null=True)

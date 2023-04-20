@@ -4,8 +4,8 @@
 @author: shuke
 @file: base_models.py 
 @time: 2019/10/25 13:26
-@contact: zhaofengfeng@rongcloud.cn
-@software:  Door
+@contact: shu_ke163@163.com
+@software:  swagger-demo
 """
 
 from django.db import models
